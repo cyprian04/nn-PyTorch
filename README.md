@@ -11,6 +11,8 @@ Each folder represents a standalone neural network project. You can navigate int
 ## 🧠 Included Models
 
 - **MLP (Multi-Layer Perceptron)** – for basic classification tasks using fully connected layers.
+- **CNN (Convolutional neural network)** – feedforward neural network that learns features via filter (or kernel) optimization.
+- 
 
 More model types (CNN, RNN, etc.) will be added progressively.
 
