@@ -175,4 +175,4 @@ cython_debug/
 
 # ignore saved_models
 /saved_models
-/nn_cnn
+/data
