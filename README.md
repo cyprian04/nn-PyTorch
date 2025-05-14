@@ -12,13 +12,23 @@ Each folder represents a standalone neural network project. You can navigate int
 
 - **MLP (Multi-Layer Perceptron)** – for basic classification tasks using fully connected layers.
 - **CNN (Convolutional neural network)** – feedforward neural network that learns features via filter (or kernel) optimization.
-- 
+- comming soon
 
-More model types (CNN, RNN, etc.) will be added progressively.
+More model types (RNN, etc.) will be added progressively.
 
 ## 📦 Dependencies
 
-Make sure to install the required dependencies before running any scripts. Most projects use:
+#### Recommended: Install PyTorch with CUDA >= 12.1 Support (for NVIDIA GPUs)
+
+If you have a compatible NVIDIA GPU (e.g., RTX 3060), you should install PyTorch with CUDA to take advantage of accelerated training and inference:
 
 ```bash
-pip install torch torchvision matplotlib
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+```
+
+#### Not Recommended: Install PyTorch without CUDA supprot
+if you want to train and test it on CPU only, make sure to install the required dependencies before running any scripts. Most projects use:
+
+```bash
+pip install torch torchvision torchaudio
+```
