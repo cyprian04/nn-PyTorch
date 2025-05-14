@@ -21,7 +21,7 @@ class CNN(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(2, 2),                          # -> (64, H/4, W/4)
 
-            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1),# -> (128, H/4, W/4)
+            nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1),# -> (128, H/4, W/4)
             nn.ReLU(),
             nn.MaxPool2d(2, 2),                          # -> (128, H/8, W/8)
             nn.AdaptiveAvgPool2d((4, 4))                 # zapewni (128, 4, 4)
@@ -73,9 +73,11 @@ class CircleDataset(Dataset):
         return image, label
 
 dataset = CircleDataset(length=1024)
-
 train_dataloader = DataLoader(dataset, 32, shuffle=True)
 test_dataloader = DataLoader(dataset, 32, shuffle=True)
+
+if torch.cuda.is_available():
+    print(torch.cuda.get_device_name(0))
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using {device} device")
@@ -84,7 +86,7 @@ loss_fn = nn.MSELoss()
 model = CNN().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-for epoch in range(10):
+for epoch in range(50):
     # === Learning phase #
     for images, target_labels in train_dataloader:
         images = images.to(device)
@@ -100,19 +102,26 @@ for epoch in range(10):
             
     # === Evaluation after each epoch ===
     model.eval()
-    correct = 0
-    total = 0
+    total_loss = 0.0
+    total_distance = 0.0
+    count = 0
+
     with torch.no_grad():
         for images, labels in test_dataloader:
             images = images.to(device)
             labels = labels.to(device)
 
             outputs = model(images)
-            predicted = torch.argmax(outputs, dim=1)
-            correct += (predicted == labels).sum().item()
-            total += labels.size()
-            accuracy = 100 * correct / total
-            print(f"Test Accuracy: {accuracy:.2f}%")
+            loss = loss_fn(outputs, labels)
+            total_loss += loss.item() * images.size(0)
+
+            distances = torch.sqrt(torch.sum((outputs - labels) ** 2, dim=1))  # shape: (batch,)
+            total_distance += distances.sum().item()
+            count += images.size(0)
+
+    avg_mse = total_loss / count
+    avg_pixel_error = total_distance / count
+    print(f"Eval -> MSE: {avg_mse:.4f}, Avg Pixel Error: {avg_pixel_error:.2f} px")
     model.train()
 
 input("Press enter to continue...")
