@@ -63,7 +63,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 for epoch in range(10):
     # === Learning phase ===
-    for images, target_labels in test_dataloader:
+    for images, target_labels in train_dataloader:
         images = images.to(device)
         target_labels = target_labels.to(device)
 
